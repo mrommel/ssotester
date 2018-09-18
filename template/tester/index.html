@@ -25,6 +25,24 @@
 		<div class="slant"></div>
 	</section>
 
+
+	<section id="fh5co-work" data-section="work">
+		<div class="container">
+			<div class="row row-bottom-padded-sm">
+
+				{% for user in user_list %}		
+					{{ user }}
+					<form action="{% url 'tester:refresh' user.id %}" method="post">
+						{% csrf_token %}
+						<input name="refresh_token" id="refresh_token" value="{{ user.refresh_token }}">
+						<label for="refresh_token">refresh</label><br>
+						<input type="submit" value="Refresh">
+					</form>	
+					<hr />
+				{% endfor %}
+			</div>
+		</div>
+	</section>
 	
 	<section id="fh5co-work" data-section="work">
 		<div class="container">

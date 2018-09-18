@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^index$', views.index, name='index'),
     url(r'^login$', views.login, name='login'),
+    url(r'^refresh/(?P<user_id>.+)$', views.refresh, name='refresh'),
 ]
