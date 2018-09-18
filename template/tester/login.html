@@ -29,14 +29,7 @@
 	<section id="fh5co-work" data-section="work">
 		<div class="container">
 			<div class="row row-bottom-padded-sm">
-				{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-				<form action="{% url 'tester:login' %}" method="post">
-				{% csrf_token %}
-				<input name="tan_field" id="tan_field" value="">
-				<label for="tan_field">TAN</label><br>
-				<input type="submit" value="Login">
-				</form>					
+				{{ tan }}				
 			</div>
 		</div>
 	</section>
