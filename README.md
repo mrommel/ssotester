@@ -1,3 +1,8 @@
+# pip
+
+pip install cryptography
+pip install PyJWT
+
 # ssotester
 
 python manage.py runserver 8021	

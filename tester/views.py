@@ -19,7 +19,6 @@ def index(request):
 		'user_list': user_list
 	})
 	
-#@csrf_exempt
 def login(request):
 	try:
 		tan = request.POST['tan_field']
@@ -59,7 +58,6 @@ def login(request):
 				'error_message': "Server responded with: %d - %s" % (response.status_code, response.content)
 			})
 			
-#@csrf_exempt
 def refresh(request, user_id):
 	user = get_object_or_404(User, pk=user_id)
 	try:
@@ -94,3 +92,39 @@ def refresh(request, user_id):
 			return render(request, 'tester/index.html', {
 				'error_message': "Server responded with: %d - %s" % (response.status_code, response.content)
 			})
+			
+def status(request, user_id):
+	user = get_object_or_404(User, pk=user_id)
+	try:
+		refresh_token = request.POST['refresh_token']
+	except (KeyError.DoesNotExist):
+		# Redisplay the question voting form.
+		return render(request, 'tester/index.html', {
+			'error_message': "You didn't provide a refresh_token.",
+		})
+	else:
+		# do something here
+		url = 'https://testotc-connect.365farmnet.com/farmnet/v1/iot/account/status/device'
+		headers = { "Content-Type": "application/json", "Authorization": "Bearer %s" % user.access_token }
+		response = requests.get(url, headers=headers)
+		response.encoding = 'utf-8'
+		
+		if(response.ok):		
+			dict = response.json()
+			
+			user.access_token = dict["access_token"]
+			user.refresh_token = dict["refresh_token"]
+			user.save()
+			print 'updated'
+		
+			# Always return an HttpResponseRedirect after successfully dealing
+			# with POST data. This prevents data from being posted twice if a
+			# user hits the Back button.
+			return HttpResponseRedirect(reverse('tester:index'))
+		else:
+			# Redisplay the question voting form.
+			return render(request, 'tester/index.html', {
+				'error_message': "Server responded with: %d - %s" % (response.status_code, response.content)
+			})
+	
+	
