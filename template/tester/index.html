@@ -31,13 +31,20 @@
 			<div class="row row-bottom-padded-sm">
 
 				{% for user in user_list %}		
-					{{ user }} - {{ user.access_token_expiry }} - {{ user.access_token_valid }}
+					{{ user }} - {% if user.access_token_valid %}Token valid{% else %}Token expired{% endif %}
 					<form action="{% url 'tester:refresh' user.id %}" method="post">
 						{% csrf_token %}
-						<input name="refresh_token" id="refresh_token" value="{{ user.refresh_token }}" type="hidden">
 						<input type="submit" value="Refresh">
 					</form>	
 					<hr />
+					
+					{{ user.device }}
+					<form action="{% url 'tester:status' user.id %}" method="post">
+						{% csrf_token %}
+						<input type="submit" value="Fetch Status">
+					</form>	
+					<hr />
+					
 				{% endfor %}
 			</div>
 		</div>

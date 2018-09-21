@@ -96,11 +96,11 @@ def refresh(request, user_id):
 def status(request, user_id):
 	user = get_object_or_404(User, pk=user_id)
 	try:
-		refresh_token = request.POST['refresh_token']
+		access_token = request.POST['access_token']
 	except (KeyError.DoesNotExist):
 		# Redisplay the question voting form.
 		return render(request, 'tester/index.html', {
-			'error_message': "You didn't provide a refresh_token.",
+			'error_message': "You didn't provide a access_token.",
 		})
 	else:
 		# do something here
@@ -112,10 +112,22 @@ def status(request, user_id):
 		if(response.ok):		
 			dict = response.json()
 			
-			user.access_token = dict["access_token"]
-			user.refresh_token = dict["refresh_token"]
+			if user.device() is None:
+				device = Device()
+			else:
+				device = user.device()
+			
+			device.user = user	
+			device.name = dict['metadata']['name']
+			device.category = dict['category']
+			device.resourceId = dict['resourceId']
+			device.deviceId = dict['deviceId']
+			device.save()
+				
+			user.device = device
 			user.save()
-			print 'updated'
+			
+			#print dict
 		
 			# Always return an HttpResponseRedirect after successfully dealing
 			# with POST data. This prevents data from being posted twice if a

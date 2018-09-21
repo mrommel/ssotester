@@ -22,6 +22,14 @@ class User(models.Model):
 		
 	def access_token_valid(self):
 		return self.access_token_expiry() > datetime.now()
+		
+	def device(self):
+		devices = Device.objects.filter(user=self)
+		
+		if devices is None or len(devices) == 0:
+			return None
+			
+		return devices[0]
 	
 	def __unicode__(self): 
 		return self.name
